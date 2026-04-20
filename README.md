@@ -83,6 +83,7 @@ Frontend responsibilities:
 
 ## Repository structure
 
+```text
 backend/
 src/
 Api
@@ -94,7 +95,7 @@ frontend/
 React application
 map components
 route visualization
-
+```
 
 The backend follows a domain-focused structure separating domain models, application logic, and infrastructure.
 
@@ -126,15 +127,18 @@ Version 3
 
 Backend
 
+```bash
 cd backend/src/Mountain.RouteExplorer.Api
 dotnet run
+```
 
 Frontend
 
+```bash
 cd frontend
 npm install
 npm run dev
-
+```
 
 ## Project goals
 
