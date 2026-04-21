@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Peakline.Api/Peakline.Api.csproj" />
+    <Project Path="src/Peakline.Application/Peakline.Application.csproj" />
+    <Project Path="src/Peakline.Domain/Peakline.Domain.csproj" />
+    <Project Path="src/Peakline.Infrastructure/Peakline.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Peakline.IntegrationTests/Peakline.IntegrationTests.csproj" />
+    <Project Path="tests/Peakline.UnitTests/Peakline.UnitTests.csproj" />
+  </Folder>
+</Solution>
