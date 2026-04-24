@@ -1,19 +1,25 @@
-export interface RoutePoint {
-  lat: number
-  lon: number
-  elevation?: number
-}
+export type RouteSummary = {
+  distanceKm: number;
+  elevationGainM: number;
+  elevationLossM: number;
+  pointCount: number;
+};
 
-export interface RouteSummary {
-  distanceKm: number
-  ascentM: number
-  descentM: number
-  durationMin?: number
-}
+export type TrackPoint = {
+  latitude: number;
+  longitude: number;
+  elevation?: number | null;
+  timestamp?: string | null;
+};
 
-export interface Route {
-  id: string
-  name: string
-  points: RoutePoint[]
-  summary: RouteSummary
-}
+export type ElevationPoint = {
+  distanceKmFromStart: number;
+  elevationM: number;
+};
+
+export type AnalyzeRouteResponse = {
+  name: string;
+  summary: RouteSummary;
+  track: TrackPoint[];
+  elevationProfile: ElevationPoint[];
+};

@@ -1,4 +1,7 @@
-﻿namespace Peakline.Infrastructure;
+﻿using Peakline.Application;
+using Peakline.Domain;
+
+namespace Peakline.Infrastructure;
 
 public class GpxParser : IGpxParser
 {

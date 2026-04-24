@@ -1,58 +1,98 @@
-import { useEffect, useRef } from 'react'
-import maplibregl, { type Map as MapLibreMap } from 'maplibre-gl'
-import 'maplibre-gl/dist/maplibre-gl.css'
-import styles from './RouteMap.module.css'
+import { useEffect, useRef } from "react";
+import maplibregl, { LngLatBounds } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import type { TrackPoint } from "../../types/route";
+import styles from "./RouteMap.module.css";
 
-interface RouteMapProps {
-  center?: [number, number]
-  zoom?: number
-}
+type Props = {
+  track: TrackPoint[];
+};
 
-const DEFAULT_CENTER: [number, number] = [37.6173, 55.7558]
-const DEFAULT_ZOOM = 4
-
-export function RouteMap({
-  center = DEFAULT_CENTER,
-  zoom = DEFAULT_ZOOM,
-}: RouteMapProps) {
-  const containerRef = useRef<HTMLDivElement | null>(null)
-  const mapRef = useRef<MapLibreMap | null>(null)
+export function RouteMap({ track }: Props) {
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return
+    if (!mapContainerRef.current || mapRef.current) {
+      return;
+    }
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: {
-        version: 8,
-        sources: {
-          osm: {
-            type: 'raster',
-            tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-            tileSize: 256,
-            attribution: '&copy; OpenStreetMap contributors',
-          },
-        },
-        layers: [
-          {
-            id: 'osm',
-            type: 'raster',
-            source: 'osm',
-          },
-        ],
-      },
-      center,
-      zoom,
-    })
+    mapRef.current = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [37.6173, 55.7558],
+      zoom: 4,
+    });
 
-    map.addControl(new maplibregl.NavigationControl(), 'top-right')
-    mapRef.current = map
+    mapRef.current.addControl(new maplibregl.NavigationControl(), "top-right");
 
     return () => {
-      map.remove()
-      mapRef.current = null
-    }
-  }, [center, zoom])
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
-  return <div ref={containerRef} className={styles.map} />
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || track.length === 0) {
+      return;
+    }
+
+    const sourceId = "route-source";
+    const layerId = "route-line";
+
+    const geoJson = {
+      type: "Feature" as const,
+      geometry: {
+        type: "LineString" as const,
+        coordinates: track.map((p) => [p.longitude, p.latitude]),
+      },
+      properties: {},
+    };
+
+    const renderRoute = () => {
+      if (!map.getSource(sourceId)) {
+        map.addSource(sourceId, {
+          type: "geojson",
+          data: geoJson,
+        });
+
+        map.addLayer({
+          id: layerId,
+          type: "line",
+          source: sourceId,
+          layout: {
+            "line-join": "round",
+            "line-cap": "round",
+          },
+          paint: {
+            "line-color": "#ff5a36",
+            "line-width": 4,
+          },
+        });
+      } else {
+        const source = map.getSource(sourceId) as maplibregl.GeoJSONSource;
+        source.setData(geoJson);
+      }
+
+      const bounds = new LngLatBounds();
+
+      for (const point of track) {
+        bounds.extend([point.longitude, point.latitude]);
+      }
+
+      map.fitBounds(bounds, {
+        padding: 40,
+        duration: 500,
+      });
+    };
+
+    if (map.isStyleLoaded()) {
+      renderRoute();
+    } else {
+      map.once("load", renderRoute);
+    }
+  }, [track]);
+
+  return <div ref={mapContainerRef} className={styles.map} />;
 }

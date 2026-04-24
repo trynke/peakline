@@ -1,35 +1,26 @@
-import type { RouteSummary } from '../../types/route'
-import styles from './RouteSummaryCard.module.css'
+import type { RouteSummary } from "../../types/route";
 
-interface RouteSummaryCardProps {
-  summary: RouteSummary
-  name?: string
-}
+type Props = {
+  summary: RouteSummary;
+  routeName: string;
+};
 
-export function RouteSummaryCard({ summary, name }: RouteSummaryCardProps) {
+export function RouteSummaryCard({ summary, routeName }: Props) {
   return (
-    <section className={styles.card}>
-      {name && <h2 className={styles.title}>{name}</h2>}
-      <dl className={styles.stats}>
-        <div className={styles.stat}>
-          <dt>Distance</dt>
-          <dd>{summary.distanceKm.toFixed(1)} km</dd>
-        </div>
-        <div className={styles.stat}>
-          <dt>Ascent</dt>
-          <dd>{Math.round(summary.ascentM)} m</dd>
-        </div>
-        <div className={styles.stat}>
-          <dt>Descent</dt>
-          <dd>{Math.round(summary.descentM)} m</dd>
-        </div>
-        {summary.durationMin !== undefined && (
-          <div className={styles.stat}>
-            <dt>Duration</dt>
-            <dd>{Math.round(summary.durationMin)} min</dd>
-          </div>
-        )}
-      </dl>
-    </section>
-  )
+    <div
+      style={{
+        padding: 16,
+        border: "1px solid #ddd",
+        borderRadius: 12,
+        background: "#fff",
+        marginBottom: 16,
+      }}
+    >
+      <h2 style={{ marginTop: 0 }}>{routeName}</h2>
+      <div>distance: {summary.distanceKm} km</div>
+      <div>elevation gain: {summary.elevationGainM} m</div>
+      <div>elevation loss: {summary.elevationLossM} m</div>
+      <div>points: {summary.pointCount}</div>
+    </div>
+  );
 }

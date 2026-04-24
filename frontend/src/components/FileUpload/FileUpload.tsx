@@ -1,34 +1,22 @@
-import { useRef } from 'react'
+type Props = {
+  onFileSelected: (file: File) => void;
+  isLoading: boolean;
+};
 
-interface FileUploadProps {
-  onFileSelected?: (file: File) => void
-  accept?: string
-  disabled?: boolean
-}
-
-export function FileUpload({
-  onFileSelected,
-  accept = '.gpx,.kml,.tcx',
-  disabled = false,
-}: FileUploadProps) {
-  const inputRef = useRef<HTMLInputElement | null>(null)
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file && onFileSelected) {
-      onFileSelected(file)
-    }
-  }
-
+export function FileUpload({ onFileSelected, isLoading }: Props) {
   return (
-    <div>
+    <div style={{ marginBottom: 16 }}>
       <input
-        ref={inputRef}
         type="file"
-        accept={accept}
-        disabled={disabled}
-        onChange={handleChange}
+        accept=".gpx"
+        onChange={(event) => {
+          const file = event.target.files?.[0];
+          if (file) {
+            onFileSelected(file);
+          }
+        }}
+        disabled={isLoading}
       />
     </div>
-  )
+  );
 }

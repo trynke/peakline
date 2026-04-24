@@ -1,19 +1,20 @@
-import type { Route } from '../types/route'
+import type { AnalyzeRouteResponse } from "../types/route";
 
-const API_BASE = import.meta.env.VITE_API_BASE ?? '/api'
+const API_BASE_URL = "http://localhost:5115";
 
-export async function uploadRoute(file: File): Promise<Route> {
-  const form = new FormData()
-  form.append('file', file)
+export async function analyzeRoute(file: File): Promise<AnalyzeRouteResponse> {
+  const formData = new FormData();
+  formData.append("file", file);
 
-  const res = await fetch(`${API_BASE}/routes`, {
-    method: 'POST',
-    body: form,
-  })
+  const response = await fetch(`${API_BASE_URL}/api/routes/analyze`, {
+    method: "POST",
+    body: formData,
+  });
 
-  if (!res.ok) {
-    throw new Error(`Failed to upload route: ${res.status}`)
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to analyze route.");
   }
 
-  return (await res.json()) as Route
+  return response.json();
 }
