@@ -452,6 +452,7 @@ dist/
 .fusebox/
 
 # Vite
+.vite/
 dist-ssr
 *.local
 
