@@ -5,16 +5,10 @@ namespace Peakline.Api.Controllers;
 
 [ApiController]
 [Route("api/routes")]
-public sealed class RoutesController : ControllerBase
+public sealed class RoutesController(IGpxParser gpxParser, IRouteAnalyzer routeAnalyzer) : ControllerBase
 {
-    private readonly IGpxParser _gpxParser;
-    private readonly IRouteAnalyzer _routeAnalyzer;
-
-    public RoutesController(IGpxParser gpxParser, IRouteAnalyzer routeAnalyzer)
-    {
-        _gpxParser = gpxParser;
-        _routeAnalyzer = routeAnalyzer;
-    }
+    private readonly IGpxParser _gpxParser = gpxParser;
+    private readonly IRouteAnalyzer _routeAnalyzer = routeAnalyzer;
 
     [HttpPost("analyze")]
     [Consumes("multipart/form-data")]
@@ -27,34 +21,31 @@ public sealed class RoutesController : ControllerBase
         if (request.File is null || request.File.Length == 0)
             return BadRequest("GPX file is required.");
 
-        // await using var stream = request.File.OpenReadStream();
+        await using var stream = request.File.OpenReadStream();
 
-        // var track = await _gpxParser.ParseAsync(stream, cancellationToken);
-        // var summary = _routeAnalyzer.CalculateSummary(track);
-        // var elevationProfile = _routeAnalyzer.BuildElevationProfile(track);
+        var track = await _gpxParser.ParseAsync(stream, cancellationToken);
+        var summary = _routeAnalyzer.CalculateSummary(track);
+        var elevationProfile = _routeAnalyzer.BuildElevationProfile(track);
 
-        // var response = new AnalyzeRouteResponse(
-        //     track.Name,
-        //     new RouteSummaryDto(
-        //         summary.DistanceKm,
-        //         summary.ElevationGainM,
-        //         summary.ElevationLossM,
-        //         summary.PointCount),
-        //     track.Points
-        //         .Select(p => new TrackPointDto(
-        //             p.Latitude,
-        //             p.Longitude,
-        //             p.Elevation,
-        //             p.Timestamp))
-        //         .ToList(),
-        //     elevationProfile
-        //         .Select(p => new ElevationPointDto(
-        //             p.DistanceKmFromStart,
-        //             p.ElevationM))
-        //         .ToList());
+        var response = new AnalyzeRouteResponse(
+            track.Name,
+            new RouteSummaryDto(
+                summary.DistanceKm,
+                summary.ElevationGainM,
+                summary.ElevationLossM,
+                summary.PointCount),
+            [.. track.Points
+                .Select(p => new TrackPointDto(
+                    p.Latitude,
+                    p.Longitude,
+                    p.Elevation,
+                    p.Timestamp))],
+            [.. elevationProfile
+                .Select(p => new ElevationPointDto(
+                    p.DistanceKmFromStart,
+                    p.ElevationM))]);
 
-        //return Ok(response);
-        return Ok();
+        return Ok(response);
     }
 }
 

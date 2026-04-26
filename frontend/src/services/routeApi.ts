@@ -1,6 +1,6 @@
 import type { AnalyzeRouteResponse } from "../types/route";
 
-const API_BASE_URL = "http://localhost:5115";
+const API_BASE_URL = "https://localhost:7135";
 
 export async function analyzeRoute(file: File): Promise<AnalyzeRouteResponse> {
   const formData = new FormData();

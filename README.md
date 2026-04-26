@@ -128,7 +128,7 @@ Version 3
 Backend
 
 ```bash
-cd backend/src/Mountain.RouteExplorer.Api
+cd backend/src/Peakline.Api
 dotnet run
 ```
 
