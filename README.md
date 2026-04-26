@@ -2,7 +2,7 @@
 
 Explore mountain routes through maps, elevation data, and spatial analysis.
 
-Mountain Route Explorer is a web application that helps visualize and analyze GPX tracks.  
+Peakline is a web application that helps visualize and analyze GPX tracks.  
 The project focuses on understanding terrain, elevation structure, and route characteristics through an interactive map interface.
 
 

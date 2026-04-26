@@ -19,9 +19,35 @@ export function RouteMap({ track }: Props) {
 
     mapRef.current = new maplibregl.Map({
       container: mapContainerRef.current,
-      style: "https://demotiles.maplibre.org/style.json",
+      style: {
+        version: 8,
+        sources: {
+          opentopomap: {
+            type: "raster",
+            tiles: [
+              "https://a.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://b.tile.opentopomap.org/{z}/{x}/{y}.png",
+              "https://c.tile.opentopomap.org/{z}/{x}/{y}.png",
+            ],
+            tileSize: 256,
+            maxzoom: 17,
+            attribution:
+              'Map data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, ' +
+              'SRTM | Map style: © <a href="https://opentopomap.org">OpenTopoMap</a> ' +
+              '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
+          },
+        },
+        layers: [
+          {
+            id: "opentopomap",
+            type: "raster",
+            source: "opentopomap",
+          },
+        ],
+      },
       center: [37.6173, 55.7558],
       zoom: 4,
+      maxZoom: 17,
     });
 
     mapRef.current.addControl(new maplibregl.NavigationControl(), "top-right");
